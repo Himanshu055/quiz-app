@@ -14,11 +14,13 @@ export class QuizComponent implements OnInit {
   quizes: any[];
   quiz: Quiz = new Quiz(null);
   mode = 'quiz';
+  public currentQuestion: number = 0;
+  data:any;
   quizName: string;
   config: QuizConfig = {
     'allowBack': true,
     'allowReview': true,
-    'autoMove': false,  // if true, it will move to next question automatically when answered.
+    'autoMove': false, 
     'duration': 300,  // indicates the time (in secs) in which quiz needs to be completed. 0 means unlimited.
     'pageSize': 1,
     'requiredAll': false,  // indicates if you must answer all the questions before submitting.
@@ -45,15 +47,16 @@ export class QuizComponent implements OnInit {
 
   ngOnInit() {
     this.quizes = this.quizService.getAll();
-    this.quizName = this.quizes[0].id;
-    this.loadQuiz(this.quizName);
+    this.quizName = this.quizes[this.currentQuestion].id;
+      this.loadQuiz(this.quizName);
   }
 
   loadQuiz(quizName: string) {
     this.quizService.getQ(quizName).subscribe((res:any) => {
       this.quiz = res;
+      console.log(this.quiz[this.currentQuestion].questions)
       this.pager.count = res.length;
-      // console.log(res.length)
+      console.log(res.length)
       console.log(res)
       this.startTime = new Date();
       this.ellapsedTime = '00:00';
@@ -67,7 +70,7 @@ export class QuizComponent implements OnInit {
     const now = new Date();
     const diff = (now.getTime() - this.startTime.getTime()) / 1000;
     if (diff >= this.config.duration) {
-      this.onSubmit();
+      this.onSubmit(this.data)
     }
     this.ellapsedTime = this.parseTime(diff);
   }
@@ -81,8 +84,8 @@ export class QuizComponent implements OnInit {
   }
 
   get filteredQuestions() {
-    return (this.quiz) ?
-      this.quiz.slice(this.pager.index, this.pager.index + this.pager.size) : [];
+    return (this.quiz[this.currentQuestion]) ?
+    this.quiz[this.currentQuestion].questions.slice(this.pager.index, this.pager.index + this.pager.size) : [];
   }
 
   onSelect(question: Question, option: Option) {
@@ -103,19 +106,29 @@ export class QuizComponent implements OnInit {
   }
 
   isAnswered(question: Question) {
-    return question.options.find(x => x.selected) ? 'Answered' : 'Not Answered';
+    return this.quiz[this.currentQuestion].questions.options.find(x => x.selected) ? 'Answered' : 'Not Answered';
   };
 
   isCorrect(question: Question) {
-    return question.options.every(x => x.selected === x.isAnswer) ? 'correct' : 'wrong';
+    return this.quiz[this.currentQuestion].questions.options.every(x => x.selected === x.isAnswer) ? 'correct' : 'wrong';
   };
 
-  onSubmit() {
+  onSubmit(data:any) {
     let answers = [];
-    this.quiz.forEach(x => answers.push({ 'quizId': this.quiz.id, 'questionId': x.id, 'answered': x.answered },
+    this.quiz[this.currentQuestion].questions.forEach(x => answers.push({ 'quizId': this.quiz.id, 'questionId': x.id, 'answered': x.answered },
     console.log(x.answered,x.id)
+    // console.log(answers)
     )
     );
+    
+    this.quizService.sendData(data).subscribe((res:any)=>{
+      let answers = [];
+      this.quiz[this.currentQuestion].questions.forEach(x => answers.push({ 'quizId': this.quiz.id, 'questionId': x.id, 'answered': x.answered },
+            )      )
+      
+    })
+      
+    
     
     // Post your data to the server here. answers contains the questionId and the users' answer.
    

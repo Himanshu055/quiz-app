@@ -3,12 +3,12 @@ import { Question } from './question';
 
 export class Quiz {
     [x: string]: any;
-    slice(index: number, arg1: number) {
-      throw new Error('Method not implemented.');
-    }
-    length(length: any) {
-      throw new Error('Method not implemented.');
-    }
+    // slice(index: number, arg1: number) {
+    //   throw new Error('Method not implemented.');
+    // }
+    // length(length: any) {
+    //   throw new Error('Method not implemented.');
+    // }
     id: number;
     name: string;
     description: string;
