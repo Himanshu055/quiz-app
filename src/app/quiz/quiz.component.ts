@@ -54,7 +54,8 @@ export class QuizComponent implements OnInit {
   loadQuiz(quizName: string) {
     this.quizService.getQ(quizName).subscribe((res:any) => {
       this.quiz = res;
-      console.log(this.quiz[this.currentQuestion].questions)
+      console.log(this.quiz[this.currentQuestion].questions[0].options)
+      console.log(this.quiz[this.currentQuestion])
       this.pager.count = res.length;
       console.log(res.length)
       console.log(res)
@@ -110,7 +111,7 @@ export class QuizComponent implements OnInit {
   };
 
   isCorrect(question: Question) {
-    return this.quiz[this.currentQuestion].questions.options.every(x => x.selected === x.isAnswer) ? 'correct' : 'wrong';
+    return this.quiz[this.currentQuestion].questions[this.currentQuestion].options.every(x => x.selected === x.isAnswer) ? 'correct' : 'wrong';
   };
 
   onSubmit(data:any) {

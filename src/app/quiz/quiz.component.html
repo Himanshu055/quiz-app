@@ -47,15 +47,15 @@
   </div>
   <div class="result" *ngIf="mode=='result'">
     <h2>Quiz Result</h2>
-    <div *ngFor="let question of quiz.questions; let index = index">
+    <div *ngFor="let question of  this.quiz[this.currentQuestion].questions; let index = index">
       <div class="result-question">
         <h5>{{index + 1}}. {{question.name}}</h5>
         <div class="row">
-          <div class="col-6" *ngFor="let Option of question.options">
+          <div class="col-6" *ngFor="let Option of  this.quiz[this.currentQuestion].questions[index].options">
             <input id="{{Option.id}}" type="checkbox" disabled="disabled" [(ngModel)]="Option.selected" /> {{Option.name}}
           </div>
         </div>
-        <div class="p-1 m-2 alert {{ isCorrect(question) == 'correct'? 'alert-success': 'alert-danger'}}">Your answer is {{isCorrect(question)}}.</div>
+        <div class="p-1 m-2 alert {{ isCorrect(question[index]) == 'correct'? 'alert-success': 'alert-danger'}}">Your answer is {{isCorrect(question[index])}}.</div>
       </div>
     </div>
     <h4 class="alert alert-info text-center">You may close this window now.</h4>
